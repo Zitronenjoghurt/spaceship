@@ -1,0 +1,18 @@
+{
+  "ship": {
+    "name": "Test",
+    "module_definitions": [
+      {
+        "type": "Thruster",
+        "base": {
+          "name": "Big Boi",
+          "active": false
+        },
+        "thruster": {
+          "thrust_newton": 1337.0,
+          "propellant_consumption": 560
+        }
+      }
+    ]
+  }
+}

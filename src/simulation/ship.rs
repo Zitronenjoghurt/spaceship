@@ -3,7 +3,7 @@ use bevy_ecs::bundle::Bundle;
 use bevy_ecs::prelude::{Component, Entity, World};
 use serde::{Deserialize, Serialize};
 
-mod modules;
+pub mod modules;
 
 #[derive(Debug, Default, Component, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Ship {

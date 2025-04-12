@@ -1,8 +1,12 @@
+use crate::simulation::ship::modules::components::resource_consume::ResourceConsume;
+use crate::simulation::ship::modules::components::resource_produce::ResourceProduce;
 use crate::simulation::ship::modules::components::thruster::Thruster;
 use crate::simulation::ship::modules::{ShipModule, ShipModuleBundle, ShipModuleType};
-use bevy_ecs::entity::Entity;
-use bevy_ecs::prelude::{Bundle, Component, World};
+use bevy_ecs::prelude::{Bundle, Component, Entity, World};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Default, Component, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ThrusterTag;
 
 #[derive(Debug, Bundle, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ThrusterBundle {
@@ -10,6 +14,9 @@ pub struct ThrusterBundle {
     tag: ThrusterTag,
     pub base: ShipModule,
     pub thruster: Thruster,
+    pub resource_consume: ResourceConsume,
+    // ToDo: Just for testing, remove later
+    pub produce: ResourceProduce,
 }
 
 impl Default for ThrusterBundle {
@@ -21,21 +28,32 @@ impl Default for ThrusterBundle {
                 ..Default::default()
             },
             thruster: Thruster::default(),
+            resource_consume: ResourceConsume::default(),
+            produce: ResourceProduce::default(),
         }
     }
 }
-
-#[derive(Debug, Default, Component, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ThrusterTag;
 
 impl ShipModuleBundle for ThrusterBundle {
     fn from_entity(entity: Entity, world: &World) -> Option<Self> {
         let base = world.get::<ShipModule>(entity)?.clone();
         let thruster = world.get::<Thruster>(entity)?.clone();
+        let resource_consume = world.get::<ResourceConsume>(entity)?.clone();
+        let produce = world.get::<ResourceProduce>(entity)?.clone();
         Some(Self {
             tag: ThrusterTag,
             base,
             thruster,
+            resource_consume,
+            produce,
         })
+    }
+
+    fn spawn(&self, world: &mut World) -> Entity {
+        let entity = world.spawn(self.clone()).id();
+        self.resource_consume
+            .spawn_tags(entity, &mut world.commands());
+        self.produce.spawn_tags(entity, &mut world.commands());
+        entity
     }
 }

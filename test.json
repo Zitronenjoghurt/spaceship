@@ -6,12 +6,39 @@
         "type": "Thruster",
         "base": {
           "name": "Big Boi",
-          "active": false,
+          "active": true,
           "module_type": "Thruster"
         },
         "thruster": {
-          "thrust_newton": 1337.0,
-          "propellant_consumption": 560
+          "thrust_newton": 1337.0
+        },
+        "resource_consume": {
+          "resources": {
+            "Propellant": 100.0
+          }
+        },
+        "produce": {
+          "resources": {
+            "Propellant": 10.0
+          },
+          "active": true
+        }
+      },
+      {
+        "type": "ResourceContainer",
+        "base": {
+          "name": "Container",
+          "active": true,
+          "module_type": "ResourceContainer"
+        },
+        "resource_store": {
+          "resources": {
+            "Propellant": 99995
+          },
+          "capacity": {
+            "Propellant": 100000
+          },
+          "open": true
         }
       }
     ]

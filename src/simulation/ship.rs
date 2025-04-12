@@ -1,5 +1,4 @@
-use crate::simulation::ship::modules::thruster::{Thruster, ThrusterBundle};
-use crate::simulation::ship::modules::{ShipModule, ShipModuleDefinition};
+use crate::simulation::ship::modules::ShipModuleDefinition;
 use bevy_ecs::bundle::Bundle;
 use bevy_ecs::prelude::{Component, Entity, World};
 use serde::{Deserialize, Serialize};
@@ -27,9 +26,7 @@ pub fn load_ship_from_json(
 
     let mut module_entities = Vec::new();
     for module_def in &ship_bundle.ship.module_definitions {
-        let module_entity = match module_def {
-            ShipModuleDefinition::Thruster(bundle) => world.spawn(bundle.clone()).id(),
-        };
+        let module_entity = module_def.spawn_bundle(world);
         module_entities.push(module_entity);
     }
 
@@ -49,16 +46,8 @@ pub fn save_ship_to_json(
     ship.module_definitions.clear();
 
     for &module_entity in &ship.modules {
-        if let (Some(base), Some(thruster)) = (
-            world.get::<ShipModule>(module_entity),
-            world.get::<Thruster>(module_entity),
-        ) {
-            let bundle = ThrusterBundle {
-                base: base.clone(),
-                thruster: thruster.clone(),
-            };
-            ship.module_definitions
-                .push(ShipModuleDefinition::Thruster(bundle))
+        if let Some(module_def) = ShipModuleDefinition::from_entity(module_entity, world) {
+            ship.module_definitions.push(module_def);
         }
     }
 

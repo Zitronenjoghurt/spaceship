@@ -6,7 +6,8 @@
         "type": "Thruster",
         "base": {
           "name": "Big Boi",
-          "active": false
+          "active": false,
+          "module_type": "Thruster"
         },
         "thruster": {
           "thrust_newton": 1337.0,

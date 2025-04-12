@@ -49,11 +49,15 @@ impl ShipModuleBundle for ThrusterBundle {
         })
     }
 
-    fn spawn(&self, world: &mut World) -> Entity {
-        let entity = world.spawn(self.clone()).id();
-        self.resource_consume
+    fn spawn(&self, world: &mut World, ship_entity: Entity) -> Entity {
+        let mut bundle = self.clone();
+        bundle.base.set_parent_ship(ship_entity);
+
+        let entity = world.spawn(bundle.clone()).id();
+        bundle
+            .resource_consume
             .spawn_tags(entity, &mut world.commands());
-        self.produce.spawn_tags(entity, &mut world.commands());
+        bundle.produce.spawn_tags(entity, &mut world.commands());
         entity
     }
 }

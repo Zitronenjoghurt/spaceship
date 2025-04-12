@@ -70,7 +70,7 @@ impl ResourceStore {
     }
 
     pub fn remove_amount(&mut self, resource: ResourceType, amount: f64) -> f64 {
-        let Some(remaining_amount) = self.get_remaining_capacity(resource) else {
+        let Some(remaining_amount) = self.get_amount(resource) else {
             return 0f64;
         };
 
@@ -85,6 +85,10 @@ impl ResourceStore {
             .map(|v| *v -= amount_to_remove);
 
         amount_to_remove
+    }
+
+    pub fn get_resource_map(&self) -> &HashMap<ResourceType, f64> {
+        &self.resources
     }
 
     pub fn is_open(&self) -> bool {

@@ -13,6 +13,8 @@ pub struct ShipModule {
     name: String,
     active: bool,
     module_type: ShipModuleType,
+    #[serde(default, skip_serializing)]
+    parent_ship: Option<Entity>,
 }
 
 impl ShipModule {
@@ -21,7 +23,7 @@ impl ShipModule {
     }
 
     pub fn is_active(&self) -> bool {
-        self.active
+        self.active && self.parent_ship.is_some()
     }
 
     pub fn set_active(&mut self, active: bool) {
@@ -31,11 +33,19 @@ impl ShipModule {
     pub fn get_module_type(&self) -> ShipModuleType {
         self.module_type
     }
+
+    pub fn get_parent_ship(&self) -> Option<Entity> {
+        self.parent_ship
+    }
+
+    pub fn set_parent_ship(&mut self, parent_entity: Entity) {
+        self.parent_ship = Some(parent_entity);
+    }
 }
 
 pub trait ShipModuleBundle: Sized {
     fn from_entity(entity: Entity, world: &World) -> Option<Self>;
-    fn spawn(&self, world: &mut World) -> Entity;
+    fn spawn(&self, world: &mut World, ship_entity: Entity) -> Entity;
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -68,10 +78,10 @@ impl ShipModuleDefinition {
         }
     }
 
-    pub fn spawn_bundle(&self, world: &mut World) -> Entity {
+    pub fn spawn_bundle(&self, world: &mut World, ship_entity: Entity) -> Entity {
         match self {
-            Self::ResourceContainer(bundle) => bundle.spawn(world),
-            Self::Thruster(bundle) => bundle.spawn(world),
+            Self::ResourceContainer(bundle) => bundle.spawn(world, ship_entity),
+            Self::Thruster(bundle) => bundle.spawn(world, ship_entity),
         }
     }
 }

@@ -33,7 +33,7 @@
         },
         "resource_store": {
           "resources": {
-            "Propellant": 99995
+            "Propellant": 50000
           },
           "capacity": {
             "Propellant": 100000

@@ -9,8 +9,14 @@ use std::collections::HashMap;
 #[derive(Debug, Default, Component, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ResourceConsume {
     resources: HashMap<ResourceType, f64>,
-    #[serde(default, skip_serializing)]
+    #[serde(default = "default_true")]
+    active: bool,
+    #[serde(default)]
     satisfied: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 impl ResourceConsume {
@@ -18,5 +24,25 @@ impl ResourceConsume {
         for resource in self.resources.keys() {
             add_resource_consume_tag(commands, entity, *resource)
         }
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.active
+    }
+
+    pub fn set_active(&mut self, active: bool) {
+        self.active = active;
+    }
+
+    pub fn is_satisfied(&self) -> bool {
+        self.satisfied
+    }
+
+    pub fn set_satisfied(&mut self, satisfied: bool) {
+        self.satisfied = satisfied;
+    }
+
+    pub fn get_resource_map(&self) -> &HashMap<ResourceType, f64> {
+        &self.resources
     }
 }

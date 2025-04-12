@@ -23,16 +23,16 @@ pub fn load_ship_from_json(
     world: &mut World,
 ) -> Result<Entity, Box<dyn std::error::Error>> {
     let ship_bundle: ShipBundle = serde_json::from_str(json_str)?;
+    let ship_entity = world.spawn(ship_bundle.clone()).id();
 
     let mut module_entities = Vec::new();
     for module_def in &ship_bundle.ship.module_definitions {
-        let module_entity = module_def.spawn_bundle(world);
+        let module_entity = module_def.spawn_bundle(world, ship_entity);
         module_entities.push(module_entity);
     }
 
-    let ship_entity = world.spawn(ship_bundle).id();
     if let Some(mut ship) = world.get_mut::<Ship>(ship_entity) {
-        ship.modules = module_entities;
+        ship.modules = module_entities.clone();
     }
 
     Ok(ship_entity)

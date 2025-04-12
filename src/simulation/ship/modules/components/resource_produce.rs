@@ -23,6 +23,10 @@ impl ResourceProduce {
         self.resources.get(&resource_type).copied()
     }
 
+    pub fn get_resource_map(&self) -> &HashMap<ResourceType, f64> {
+        &self.resources
+    }
+
     pub fn is_active(&self) -> bool {
         self.active
     }

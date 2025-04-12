@@ -6,7 +6,7 @@ mod app;
 mod simulation;
 
 fn main() {
-    let mut world = build_world(10);
+    let mut world = build_world(20);
     let mut schedule = build_schedule();
 
     let ship_path = PathBuf::from("./test.json");
@@ -18,7 +18,7 @@ fn main() {
     let json = save_ship_to_json(ship_entity, &mut world).unwrap();
     std::fs::write(ship_save_path, json).unwrap();
 
-    run_simulation(&mut world, &mut schedule);
+    run_simulation(ship_entity, &mut world, &mut schedule);
 
     //let options = eframe::NativeOptions {
     //    viewport: egui::ViewportBuilder::default().with_inner_size([320.0, 240.0]),

@@ -39,9 +39,13 @@ impl ShipModuleBundle for ResourceContainerBundle {
         })
     }
 
-    fn spawn(&self, world: &mut World) -> Entity {
-        let entity = world.spawn(self.clone()).id();
-        self.resource_store
+    fn spawn(&self, world: &mut World, ship_entity: Entity) -> Entity {
+        let mut bundle = self.clone();
+        bundle.base.set_parent_ship(ship_entity);
+
+        let entity = world.spawn(bundle.clone()).id();
+        bundle
+            .resource_store
             .spawn_tags(entity, &mut world.commands());
         entity
     }

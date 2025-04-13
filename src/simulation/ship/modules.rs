@@ -1,5 +1,7 @@
 use crate::simulation::ship::modules::resource_container::ResourceContainerBundle;
 use crate::simulation::ship::modules::thruster::ThrusterBundle;
+use crate::simulation::tags::ship_position_specific::add_ship_position_tags;
+use crate::simulation::types::ship_position::ShipPosition;
 use bevy_ecs::prelude::{Component, Entity, World};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
@@ -13,11 +15,27 @@ pub struct ShipModule {
     name: String,
     active: bool,
     module_type: ShipModuleType,
+    position: ShipPosition,
     #[serde(default, skip_serializing)]
     parent_ship: Option<Entity>,
 }
 
 impl ShipModule {
+    pub fn create(
+        name: &str,
+        active: bool,
+        module_type: ShipModuleType,
+        position: ShipPosition,
+    ) -> Self {
+        Self {
+            name: name.to_owned(),
+            active,
+            module_type,
+            position,
+            parent_ship: None,
+        }
+    }
+
     pub fn get_name(&self) -> &String {
         &self.name
     }
@@ -43,9 +61,10 @@ impl ShipModule {
     }
 }
 
-pub trait ShipModuleBundle: Sized {
-    fn from_entity(entity: Entity, world: &World) -> Option<Self>;
-    fn spawn(&self, world: &mut World, ship_entity: Entity) -> Entity;
+pub trait ShipModuleBundle {
+    fn spawn(&mut self, world: &mut World) -> Entity;
+    fn set_parent_ship(&mut self, parent_entity: Entity);
+    fn get_ship_position(&self) -> ShipPosition;
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -79,9 +98,17 @@ impl ShipModuleDefinition {
     }
 
     pub fn spawn_bundle(&self, world: &mut World, ship_entity: Entity) -> Entity {
-        match self {
-            Self::ResourceContainer(bundle) => bundle.spawn(world, ship_entity),
-            Self::Thruster(bundle) => bundle.spawn(world, ship_entity),
-        }
+        let bundle: &mut dyn ShipModuleBundle = match self {
+            Self::ResourceContainer(bundle) => &mut bundle.clone(),
+            Self::Thruster(bundle) => &mut bundle.clone(),
+        };
+
+        bundle.set_parent_ship(ship_entity);
+
+        let entity = bundle.spawn(world);
+
+        add_ship_position_tags(&mut world.commands(), entity, bundle.get_ship_position());
+
+        entity
     }
 }

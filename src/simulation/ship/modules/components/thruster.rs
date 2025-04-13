@@ -7,6 +7,10 @@ pub struct Thruster {
 }
 
 impl Thruster {
+    pub fn create(thrust_newton: f64) -> Self {
+        Self { thrust_newton }
+    }
+
     pub fn get_thrust_newton(&self) -> f64 {
         self.thrust_newton
     }

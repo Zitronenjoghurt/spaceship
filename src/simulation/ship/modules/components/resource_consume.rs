@@ -20,6 +20,19 @@ fn default_true() -> bool {
 }
 
 impl ResourceConsume {
+    pub fn create(resources_consume: Vec<(ResourceType, f64)>, active: bool) -> Self {
+        let mut resources = HashMap::new();
+        for (resource_type, amount) in resources_consume {
+            resources.insert(resource_type, amount);
+        }
+
+        Self {
+            resources,
+            active,
+            satisfied: false,
+        }
+    }
+
     pub fn spawn_tags(&self, entity: Entity, commands: &mut Commands) {
         for resource in self.resources.keys() {
             add_resource_consume_tag(commands, entity, *resource)

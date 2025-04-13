@@ -1,7 +1,7 @@
 use crate::simulation::resources::tick_timer::TickTimer;
 use crate::simulation::ship::modules::components::resource_consume::ResourceConsume;
-use crate::simulation::ship::modules::components::resource_container::ResourceStore;
 use crate::simulation::ship::modules::components::resource_produce::ResourceProduce;
+use crate::simulation::ship::modules::components::resource_store::ResourceStore;
 use crate::simulation::ship::modules::ShipModule;
 use crate::simulation::types::resource_collection::ResourceCollection;
 use bevy_ecs::prelude::{Entity, Query, Res};
@@ -119,7 +119,7 @@ pub fn resource_production_consumption_system(
         };
 
         for (resource_type, amount_to_remove) in resource_collection.get_resource_map_mut() {
-            let removed_amount = store.remove_amount(*resource_type, *amount_to_remove);
+            let removed_amount = store.remove_amount(*resource_type, *amount_to_remove * delta);
             *amount_to_remove -= removed_amount;
         }
     }

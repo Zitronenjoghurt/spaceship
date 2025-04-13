@@ -14,6 +14,21 @@ pub struct ResourceStore {
 }
 
 impl ResourceStore {
+    pub fn create(resources_capacity: Vec<(ResourceType, f64)>, open: bool) -> Self {
+        let mut resources = HashMap::new();
+        let mut capacity = HashMap::new();
+        for (resource_type, amount) in resources_capacity {
+            resources.insert(resource_type, 0f64);
+            capacity.insert(resource_type, amount);
+        }
+
+        Self {
+            resources,
+            capacity,
+            open,
+        }
+    }
+
     pub fn spawn_tags(&self, entity: Entity, commands: &mut Commands) {
         for resource in self.resources.keys() {
             add_resource_store_tag(commands, entity, *resource)

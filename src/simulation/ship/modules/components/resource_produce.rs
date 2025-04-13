@@ -13,6 +13,15 @@ pub struct ResourceProduce {
 }
 
 impl ResourceProduce {
+    pub fn create(resources_produce: Vec<(ResourceType, f64)>, active: bool) -> Self {
+        let mut resources = HashMap::new();
+        for (resource_type, amount) in resources_produce {
+            resources.insert(resource_type, amount);
+        }
+
+        Self { resources, active }
+    }
+
     pub fn spawn_tags(&self, entity: Entity, commands: &mut Commands) {
         for resource in self.resources.keys() {
             add_resource_produce_tag(commands, entity, *resource)
